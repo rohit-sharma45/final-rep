@@ -204,9 +204,9 @@ td{padding:6px 4px;border-top:1px solid var(--ln);overflow-wrap:anywhere}
    <table><thead><tr><th>Location</th><th>Time</th><th>Speed</th><th>Status</th></tr></thead>
    <tbody id="hb"><tr><td colspan="4" style="color:var(--mut)">No points yet</td></tr></tbody></table>
   </div>
-  <div class="card"><h2>Recent Route</h2><svg id="rr" viewBox="0 0 300 170"></svg></div>
+  <div class="card"><h2>Recent Route <small><button id="newTraj" style="padding:3px 10px;font-size:12px" title="Clear the route and start a new one from the current location">New trajectory</button></small></h2><svg id="rr" viewBox="0 0 300 170"></svg></div>
   <div class="card"><h2>Speed Graph</h2><canvas id="chart" width="420" height="170"></canvas></div>
- </div>
+  </div>
 
  <div class="card" id="zn">
   <h2>Geofence Zones &amp; Settings</h2>
@@ -763,6 +763,15 @@ $('clr').onclick=()=>{
 };
 $('lim').oninput=()=>{drawChart();saveCfg()};
 $('dev').oninput=saveCfg;
+
+ /* Clear the route and start a new trajectory from the current location. */
+$('newTraj').onclick=()=>{
+ const p=st.trail[st.trail.length-1];
+ st.trail=p?[{...p,t:Date.now()}]:[];     // new trajectory starts at the current point
+ trailLine.setLatLngs(p?[[p.lat,p.lon]]:[]);
+ render();
+ toast(p?'New trajectory started from the current location.':'Route cleared. It will start at the next GPS position.');
+};
 
 /* Export GPS history as CSV. */
 $('rep').onclick=e=>{
